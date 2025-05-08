@@ -1,0 +1,143 @@
+<div class="container">
+  <h1>{{ isEditMode ? 'Modifier le devis' : 'Créer un nouveau devis' }}</h1>
+
+  <form [formGroup]="devisForm" (ngSubmit)="onSubmit()">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Informations générales</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Client</mat-label>
+            <mat-select formControlName="clientId" required>
+              <mat-option *ngFor="let client of clients" [value]="client.id">
+                {{ client.nom }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="devisForm.get('clientId')?.hasError('required')">
+              Le client est obligatoire
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field" *ngIf="contacts.length > 0">
+            <mat-label>Contact</mat-label>
+            <mat-select>
+              <mat-option *ngFor="let contact of contacts" [value]="contact.id">
+                {{ contact.email || contact.telephone }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="form-field-full">
+          <mat-label>Périmètre</mat-label>
+          <textarea matInput formControlName="perimetre" rows="3"></textarea>
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Offre fonctionnelle</mat-label>
+            <textarea matInput formControlName="offreFonctionnelle" rows="3"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Offre technique</mat-label>
+            <textarea matInput formControlName="offreTechnique" rows="3"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Conditions</mat-label>
+            <textarea matInput formControlName="conditions" rows="3"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Planning</mat-label>
+            <textarea matInput formControlName="planning" rows="3"></textarea>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="lignes-card">
+      <mat-card-header>
+        <mat-card-title>Lignes de devis</mat-card-title>
+        <button mat-icon-button color="primary" (click)="addLigne()" type="button">
+          <mat-icon>add</mat-icon>
+        </button>
+      </mat-card-header>
+      <mat-card-content>
+        <div formArrayName="lignes">
+          <div *ngFor="let ligne of lignes.controls; let i = index" [formGroupName]="i" class="ligne-row">
+            <div class="ligne-content">
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Description</mat-label>
+                <input matInput formControlName="descriptionLibre">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field-small">
+                <mat-label>Quantité</mat-label>
+                <input matInput type="number" formControlName="quantite" min="0.01" step="0.01">
+                <mat-error *ngIf="ligne.get('quantite')?.hasError('required')">
+                  Obligatoire
+                </mat-error>
+                <mat-error *ngIf="ligne.get('quantite')?.hasError('min')">
+                  Min 0.01
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field-small">
+                <mat-label>Prix unitaire HT</mat-label>
+                <input matInput type="number" formControlName="prixUnitaireHt" min="0.01" step="0.01">
+                <mat-error *ngIf="ligne.get('prixUnitaireHt')?.hasError('required')">
+                  Obligatoire
+                </mat-error>
+                <mat-error *ngIf="ligne.get('prixUnitaireHt')?.hasError('min')">
+                  Min 0.01
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field-small">
+                <mat-label>TVA %</mat-label>
+                <input matInput type="number" formControlName="tvaPct" min="0" step="0.1">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field-small">
+                <mat-label>Ristourne %</mat-label>
+                <input matInput type="number" formControlName="ristournePct" min="0" max="100" step="0.1">
+              </mat-form-field>
+
+              <button mat-icon-button color="warn" (click)="removeLigne(i)" type="button">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="totals-card">
+      <mat-card-content>
+        <div class="totals-row">
+          <span>Total HT:</span>
+          <span>{{ calculateTotalHt() | currency:'EUR':'symbol':'1.2-2' }}</span>
+        </div>
+        <div class="totals-row">
+          <span>Total TTC:</span>
+          <span>{{ calculateTotalTtc() | currency:'EUR':'symbol':'1.2-2' }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="actions">
+      <button mat-raised-button type="button" (click)="router.navigate(['/devis'])">
+        Annuler
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
+        {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+      </button>
+    </div>
+  </form>
+</div>

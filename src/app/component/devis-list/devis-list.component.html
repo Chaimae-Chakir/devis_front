@@ -1,0 +1,84 @@
+<div class="container">
+  <div class="header">
+    <h1>Liste des devis</h1>
+    <button mat-raised-button color="primary" (click)="createNewDevis()">
+      <mat-icon>add</mat-icon> Nouveau devis
+    </button>
+  </div>
+
+  <mat-card *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </mat-card>
+
+  <div class="table-container" *ngIf="!isLoading">
+<!--    <table mat-table [dataSource]="devisList" class="mat-elevation-z8">-->
+    <table mat-table [dataSource]="lignes" class="mat-elevation-z8">
+    <!-- Numéro Column -->
+      <ng-container matColumnDef="numero">
+        <th mat-header-cell *matHeaderCellDef>Numéro</th>
+        <td mat-cell *matCellDef="let devis">{{ devis.numero }}</td>
+      </ng-container>
+
+      <!-- Client Column -->
+      <ng-container matColumnDef="clientNom">
+        <th mat-header-cell *matHeaderCellDef>Client</th>
+        <td mat-cell *matCellDef="let devis">{{ devis.clientNom }}</td>
+      </ng-container>
+
+      <!-- Date Column -->
+      <ng-container matColumnDef="dateCreation">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let devis">{{ devis.dateCreation | date:'dd/MM/yyyy' }}</td>
+      </ng-container>
+
+      <!-- Statut Column -->
+      <ng-container matColumnDef="statut">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let devis">
+<!--          <span [class]="'status-badge ' + devis.statut.toLowerCase()">-->
+<!--            {{ devis.statut }}-->
+<!--          </span>-->
+          <span *ngIf="devis?.statut"
+                class="info-value status-badge {{ devis.statut.toLowerCase() }}">
+  {{ devis.statut }}
+</span>
+
+        </td>
+      </ng-container>
+
+      <!-- Total HT Column -->
+      <ng-container matColumnDef="totalHt">
+        <th mat-header-cell *matHeaderCellDef>Total HT</th>
+        <td mat-cell *matCellDef="let devis">{{ devis.totalHt | currency:'EUR':'symbol':'1.2-2' }}</td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let devis" class="actions-cell">
+          <button mat-icon-button color="primary" (click)="viewDevis(devis.id)" matTooltip="Voir">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" (click)="editDevis(devis.id)" matTooltip="Modifier">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="primary" (click)="duplicateDevis(devis.id)" matTooltip="Dupliquer">
+            <mat-icon>content_copy</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="generatePdf(devis.id)" matTooltip="PDF">
+            <mat-icon>picture_as_pdf</mat-icon>
+          </button>
+          <button mat-icon-button color="primary" (click)="validateDevis(devis.id)" *ngIf="devis.statut !== 'VALIDATED'" matTooltip="Valider">
+            <mat-icon>check_circle</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteDevis(devis.id)" matTooltip="Supprimer">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>

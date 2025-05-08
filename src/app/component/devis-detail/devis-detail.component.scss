@@ -1,0 +1,73 @@
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.info-card {
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.info-label {
+  font-weight: bold;
+  width: 150px;
+}
+
+.info-value {
+  flex: 1;
+}
+
+.section-card {
+  margin-bottom: 20px;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+
+  &.brouillon {
+    background-color: #ffd700;
+    color: #000;
+  }
+
+  &.validated {
+    background-color: #4caf50;
+    color: #fff;
+  }
+
+  &.sent {
+    background-color: #2196f3;
+    color: #fff;
+  }
+
+  &.canceled {
+    background-color: #f44336;
+    color: #fff;
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
