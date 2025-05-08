@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DevisService } from '../../services/devis.service';
-import {DevisLigneResponse, DevisResponse} from '../../models/devis-response.model';
+import { DevisResponse } from '../../models/devis-response.model';
 import { Router } from '@angular/router';
 import {MatDialog} from "@angular/material/dialog";
 import {ConfirmDialogComponent} from "../../shared/confirm-dialog/confirm-dialog.component";
@@ -14,7 +14,6 @@ export class DevisListComponent implements OnInit {
   devisList: DevisResponse[] = [];
   displayedColumns: string[] = ['numero', 'clientNom', 'dateCreation', 'statut', 'totalHt', 'actions'];
   isLoading = true;
-  selectedDevis: DevisResponse | null = null;
 
   constructor(
     private devisService: DevisService,
@@ -26,14 +25,16 @@ export class DevisListComponent implements OnInit {
     this.loadDevis();
   }
 
-  loadDevis(): void {
+  loadDevis(clientId?: number): void {
     this.isLoading = true;
-    this.devisService.getAllDevis().subscribe({
+    this.devisService.getAllDevis(clientId).subscribe({
       next: (devis) => {
         this.devisList = devis;
         this.isLoading = false;
+        console.log(this.devisList);
       },
-      error: () => {
+      error: (error) => {
+        console.error('Error loading devis:', error);
         this.isLoading = false;
       }
     });
@@ -86,9 +87,5 @@ export class DevisListComponent implements OnInit {
 
   createNewDevis(): void {
     this.router.navigate(['/devis/new']);
-  }
-
-  get lignes(): DevisLigneResponse[] {
-    return this.selectedDevis?.lignes ?? [];
   }
 }

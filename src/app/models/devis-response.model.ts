@@ -1,7 +1,8 @@
+// Corrigez vos interfaces pour matcher le backend
 export interface DevisLigneResponse {
   id: number;
   descriptionLibre?: string;
-  quantite: number;
+  quantite: number; // BigDecimal en Java devient number en TS
   prixUnitaireHt: number;
   tvaPct?: number;
   ristournePct?: number;
@@ -13,9 +14,9 @@ export interface DevisResponse {
   clientId: number;
   clientNom: string;
   statut: string;
-  dateCreation: string;
-  dateValidation?: string;
-  totalHt: number;
+  dateCreation: string; // ZonedDateTime devient string
+  dateValidation?: string; // ZonedDateTime devient string
+  totalHt: number; // BigDecimal devient number
   lignes: DevisLigneResponse[];
   perimetre?: string;
   offreFonctionnelle?: string;
