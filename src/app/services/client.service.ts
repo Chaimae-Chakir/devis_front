@@ -16,6 +16,10 @@ export class ClientService {
     return this.http.post<ClientResponse>(this.apiUrl, client);
   }
 
+  getAllClients(): Observable<ClientResponse[]> {
+    return this.http.get<ClientResponse[]>(this.apiUrl);
+  }
+
   getClientById(id: number): Observable<ClientResponse> {
     return this.http.get<ClientResponse>(`${this.apiUrl}/${id}`);
   }

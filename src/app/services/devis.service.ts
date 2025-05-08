@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class DevisService {
-  private apiUrl = `http://localhost:8081/api/v1/devis`;
+  private apiUrl = `${environment.apiUrl}/api/v1/devis`;
 
   constructor(private http: HttpClient) { }
 

@@ -86,10 +86,13 @@ export class DevisFormComponent implements OnInit {
   }
 
   loadClients(): void {
-    // Ici vous devriez implémenter la récupération des clients
-    // Pour l'exemple, nous simulons des données
-    this.clientService.getClientById(1).subscribe(client => {
-      this.clients = [client];
+    this.clientService.getAllClients().subscribe({
+      next: (clients) => {
+        this.clients = clients;
+      },
+      error: (error) => {
+        console.error('Error loading clients:', error);
+      }
     });
   }
 
