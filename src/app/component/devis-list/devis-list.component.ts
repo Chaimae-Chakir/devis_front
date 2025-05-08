@@ -31,7 +31,6 @@ export class DevisListComponent implements OnInit {
       next: (devis) => {
         this.devisList = devis;
         this.isLoading = false;
-        console.log(this.devisList);
       },
       error: (error) => {
         console.error('Error loading devis:', error);
@@ -79,7 +78,6 @@ export class DevisListComponent implements OnInit {
   }
 
   validateDevis(id: number): void {
-    // Ici vous pourriez demander le nom du validateur via un dialogue
     this.devisService.validateDevis(id, 'Admin').subscribe(() => {
       this.loadDevis();
     });

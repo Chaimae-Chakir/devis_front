@@ -29,11 +29,11 @@
       </div>
       <div class="info-row">
         <span class="info-label">Date de création:</span>
-<!--        <span class="info-value">{{ devis.dateCreation | date:'dd/MM/yyyy' }}</span>-->
+        <span class="info-value">{{ devis.dateCreation | date:'dd/MM/yyyy' }}</span>
       </div>
       <div class="info-row" *ngIf="devis.dateValidation">
         <span class="info-label">Date de validation:</span>
-<!--        <span class="info-value">{{ devis.dateValidation | date:'dd/MM/yyyy' }}</span>-->
+        <span class="info-value">{{ devis.dateValidation | date:'dd/MM/yyyy' }}</span>
       </div>
     </mat-card-content>
   </mat-card>
@@ -89,37 +89,31 @@
     </mat-card-header>
     <mat-card-content>
       <table mat-table [dataSource]="devis.lignes" class="mat-elevation-z8">
-        <!-- Description Column -->
         <ng-container matColumnDef="description">
           <th mat-header-cell *matHeaderCellDef>Description</th>
           <td mat-cell *matCellDef="let ligne">{{ ligne.descriptionLibre }}</td>
         </ng-container>
 
-        <!-- Quantité Column -->
         <ng-container matColumnDef="quantite">
           <th mat-header-cell *matHeaderCellDef>Quantité</th>
           <td mat-cell *matCellDef="let ligne">{{ ligne.quantite }}</td>
         </ng-container>
 
-        <!-- Prix Unitaire Column -->
         <ng-container matColumnDef="prixUnitaire">
           <th mat-header-cell *matHeaderCellDef>Prix unitaire HT</th>
           <td mat-cell *matCellDef="let ligne">{{ ligne.prixUnitaireHt | currency:'EUR':'symbol':'1.2-2' }}</td>
         </ng-container>
 
-        <!-- TVA Column -->
         <ng-container matColumnDef="tva">
           <th mat-header-cell *matHeaderCellDef>TVA %</th>
           <td mat-cell *matCellDef="let ligne">{{ ligne.tvaPct }}%</td>
         </ng-container>
 
-        <!-- Ristourne Column -->
         <ng-container matColumnDef="ristourne">
           <th mat-header-cell *matHeaderCellDef>Ristourne %</th>
           <td mat-cell *matCellDef="let ligne">{{ ligne.ristournePct }}%</td>
         </ng-container>
 
-        <!-- Total HT Column -->
         <ng-container matColumnDef="totalHt">
           <th mat-header-cell *matHeaderCellDef>Total HT</th>
           <td mat-cell *matCellDef="let ligne">
