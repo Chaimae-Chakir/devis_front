@@ -1,8 +1,9 @@
-<h1 mat-dialog-title>{{ data.title }}</h1>
-<div mat-dialog-content>
+<div mat-dialog-content class="minimal-dialog">
+  <h2>{{ data.title }}</h2>
   <p>{{ data.message }}</p>
-</div>
-<div mat-dialog-actions align="end">
-  <button mat-button (click)="onNoClick()">Non</button>
-  <button mat-button color="warn" (click)="onYesClick()">Oui</button>
+
+  <div class="actions">
+    <button mat-button (click)="onNoClick()">Annuler</button>
+    <button mat-flat-button color="warn" (click)="onYesClick()">Supprimer</button>
+  </div>
 </div>

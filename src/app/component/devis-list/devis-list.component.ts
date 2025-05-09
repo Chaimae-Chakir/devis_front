@@ -4,6 +4,7 @@ import { DevisResponse } from '../../models/devis-response.model';
 import { Router } from '@angular/router';
 import {MatDialog} from "@angular/material/dialog";
 import {ConfirmDialogComponent} from "../../shared/confirm-dialog/confirm-dialog.component";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-devis-list',
@@ -18,7 +19,8 @@ export class DevisListComponent implements OnInit {
   constructor(
     private devisService: DevisService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -49,6 +51,7 @@ export class DevisListComponent implements OnInit {
 
   deleteDevis(id: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      disableClose: true,
       data: {
         title: 'Confirmer la suppression',
         message: 'Êtes-vous sûr de vouloir supprimer ce devis ?'
@@ -57,8 +60,17 @@ export class DevisListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.devisService.deleteDevis(id).subscribe(() => {
-          this.loadDevis();
+        this.isLoading = true;
+        this.devisService.deleteDevis(id).subscribe({
+          next: () => {
+            this.loadDevis();
+            this.snackBar.open('Devis supprimé avec succès', 'Fermer', { duration: 3000 });
+          },
+          error: (err) => {
+            console.error('Erreur lors de la suppression', err);
+            this.isLoading = false;
+            this.snackBar.open('Échec de la suppression', 'Fermer', { duration: 3000 });
+          }
         });
       }
     });
