@@ -53,14 +53,6 @@ export class DevisFormComponent implements OnInit {
         this.loadDevis(this.devisId);
       }
     });
-
-    this.devisForm.get('clientId')?.valueChanges.subscribe(clientId => {
-      if (clientId) {
-        this.loadContacts(clientId);
-      } else {
-        this.contacts = [];
-      }
-    });
   }
 
   get lignes(): FormArray {
@@ -69,11 +61,11 @@ export class DevisFormComponent implements OnInit {
 
   createLigne(ligne?: DevisLigneRequest): FormGroup {
     return this.fb.group({
-      descriptionLibre: [ligne?.descriptionLibre || ''],
-      quantite: [ligne?.quantite || 1, [Validators.required, Validators.min(0.01)]],
-      prixUnitaireHt: [ligne?.prixUnitaireHt || 0, [Validators.required, Validators.min(0.01)]],
-      tvaPct: [ligne?.tvaPct || 20],
-      ristournePct: [ligne?.ristournePct || 0]
+      descriptionLibre: [ligne?.descriptionLibre ?? ''],
+      quantite: [ligne?.quantite ?? 1, [Validators.required, Validators.min(0.01)]],
+      prixUnitaireHt: [ligne?.prixUnitaireHt ?? 0, [Validators.required, Validators.min(0.01)]],
+      tvaPct: [ligne?.tvaPct ?? 20],
+      ristournePct: [ligne?.ristournePct ?? 20]
     });
   }
 
@@ -96,12 +88,6 @@ export class DevisFormComponent implements OnInit {
     });
   }
 
-  loadContacts(clientId: number): void {
-    this.contactService.getContactsByClient(clientId).subscribe(contacts => {
-      this.contacts = contacts;
-    });
-  }
-
   loadDevis(id: number): void {
     this.isLoading = true;
     this.devisService.getDevisById(id).subscribe({
@@ -115,17 +101,14 @@ export class DevisFormComponent implements OnInit {
           planning: devis.planning,
           offrePdfUrl: devis.offrePdfUrl
         });
-
         // Clear existing lines
         while (this.lignes.length) {
           this.lignes.removeAt(0);
         }
-
         // Add lines from the devis
         devis.lignes.forEach(ligne => {
           this.lignes.push(this.createLigne(ligne));
         });
-
         this.isLoading = false;
       },
       error: () => {
@@ -136,9 +119,9 @@ export class DevisFormComponent implements OnInit {
 
   calculateTotalHt(): number {
     return this.lignes.controls.reduce((total, ligne) => {
-      const quantite = ligne.get('quantite')?.value || 0;
-      const prixUnitaire = ligne.get('prixUnitaireHt')?.value || 0;
-      const ristourne = ligne.get('ristournePct')?.value || 0;
+      const quantite = ligne.get('quantite')?.value ?? 0;
+      const prixUnitaire = ligne.get('prixUnitaireHt')?.value ?? 0;
+      const ristourne = ligne.get('ristournePct')?.value ?? 0;
       const montant = quantite * prixUnitaire;
       return total + (montant - (montant * ristourne / 100));
     }, 0);
@@ -146,10 +129,10 @@ export class DevisFormComponent implements OnInit {
 
   calculateTotalTtc(): number {
     return this.lignes.controls.reduce((total, ligne) => {
-      const quantite = ligne.get('quantite')?.value || 0;
-      const prixUnitaire = ligne.get('prixUnitaireHt')?.value || 0;
-      const ristourne = ligne.get('ristournePct')?.value || 0;
-      const tva = ligne.get('tvaPct')?.value || 0;
+      const quantite = ligne.get('quantite')?.value ?? 0;
+      const prixUnitaire = ligne.get('prixUnitaireHt')?.value ?? 0;
+      const ristourne = ligne.get('ristournePct')?.value ?? 0;
+      const tva = ligne.get('tvaPct')?.value ?? 0;
       const montant = quantite * prixUnitaire;
       const montantApresRistourne = montant - (montant * ristourne / 100);
       return total + (montantApresRistourne * (1 + tva / 100));

@@ -49,7 +49,7 @@ export class DevisDetailComponent implements OnInit {
     return lignes.reduce((total, ligne) => {
       const ristourne = ligne.ristournePct ?? 0;
       const montant = ligne.quantite * ligne.prixUnitaireHt * (1 - (ristourne ?? 0) / 100);
-      return total + (montant * (1 + (ligne.tvaPct || 0) / 100));
+      return total + (montant * (1 + (ligne.tvaPct ?? 0) / 100));
     }, 0);
   }
 
