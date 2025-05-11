@@ -27,11 +27,11 @@ export class DevisListComponent implements OnInit {
     this.loadDevis();
   }
 
-  loadDevis(clientId?: number): void {
+  loadDevis(): void {
     this.isLoading = true;
-    this.devisService.getAllDevis(clientId).subscribe({
-      next: (devis) => {
-        this.devisList = devis;
+    this.devisService.getAllDevis().subscribe({
+      next: (response) => {
+        this.devisList = response.devis;
         this.isLoading = false;
       },
       error: (error) => {

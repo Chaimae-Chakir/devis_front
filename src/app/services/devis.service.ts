@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { DevisResponse } from '../models/devis-response.model';
+import {DevisPageResponse, DevisResponse} from '../models/devis-response.model';
 import { DevisRequest } from '../models/devis-request.model';
 import {environment} from "../environments/environment";
+import {ClientPageResponse} from "../models/client.model";
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +14,11 @@ export class DevisService {
 
   constructor(private http: HttpClient) { }
 
-  getAllDevis(clientId?: number): Observable<DevisResponse[]> {
-    let params = new HttpParams();
-    if (clientId) {
-      params = params.append('clientId', clientId.toString());
-    }
-    return this.http.get<DevisResponse[]>(this.apiUrl, { params });
+  getAllDevis(page: number = 0, size: number = 10): Observable<DevisPageResponse> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<DevisPageResponse>(this.apiUrl, { params });
   }
 
   getDevisById(id: number): Observable<DevisResponse> {

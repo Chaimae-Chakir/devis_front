@@ -1,3 +1,5 @@
+import {ClientResponse} from "./client.model";
+
 export interface DevisLigneResponse {
   id: number;
   descriptionLibre?: string;
@@ -23,4 +25,11 @@ export interface DevisResponse {
   conditions?: string;
   planning?: string;
   offrePdfUrl?: string;
+}
+export interface DevisPageResponse {
+  devis: DevisResponse[];
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  totalElements: number;
 }
