@@ -33,7 +33,7 @@ export class ClientService {
     return this.http.get<ClientPageResponse>(this.apiUrl, { params });
   }
 
-  updateClient(id:number, client: ClientRequest): Observable<ClientResponse> {
+  updateClient(id:number, client: ClientResponse): Observable<ClientResponse> {
     return this.http.put<ClientResponse>(`${this.apiUrl}/${id}`, client);
   }
 

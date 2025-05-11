@@ -18,7 +18,7 @@ export interface ClientResponse {
   adresse?: string;
   ville?: string;
   pays?: string;
-  dateCreation: string;
+  dateCreation?: string;
   contacts?: ContactResponse[];
 }
 
