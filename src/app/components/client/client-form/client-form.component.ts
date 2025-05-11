@@ -11,7 +11,7 @@ import { ClientResponse } from '../../../models/client.model';
 @Component({
   selector: 'app-client-form',
   templateUrl: './client-form.component.html',
-  styleUrls: ['client-form.component.scss']
+  styleUrls: ['./client-form.component.scss']
 })
 export class ClientFormComponent implements OnInit {
   clientForm: FormGroup;
@@ -38,49 +38,66 @@ export class ClientFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.data.isEdit && this.data.clientData) {
+    console.log('Dialog data:', this.data);
+    if (this.data && this.data.isEdit && this.data.clientData) {
       this.isEditMode = true;
       this.clientData = this.data.clientData;
       this.patchFormValues();
     }
   }
+
   private patchFormValues(): void {
     if (this.clientData) {
-      this.clientForm.patchValue({
-        nom: this.clientData.nom,
-        ice: this.clientData.ice,
-        logoUrl: this.clientData.logoUrl,
-        adresse: this.clientData.adresse,
-        ville: this.clientData.ville,
-        pays: this.clientData.pays
+      console.log('Patching form with values:', this.clientData);
+      // Use setTimeout to ensure Angular's change detection picks up the changes
+      setTimeout(() => {
+        this.clientForm.patchValue({
+          nom: this.clientData.nom || '',
+          ice: this.clientData.ice || '',
+          logoUrl: this.clientData.logoUrl || '',
+          adresse: this.clientData.adresse || '',
+          ville: this.clientData.ville || '',
+          pays: this.clientData.pays || ''
+        });
+
+        // Mark all fields as touched to trigger validation
+        Object.keys(this.clientForm.controls).forEach(key => {
+          const control = this.clientForm.get(key);
+          if (control) {
+            control.markAsTouched();
+            control.updateValueAndValidity();
+          }
+        });
+
+        console.log('Form valid after patch:', this.clientForm.valid);
+        console.log('Form values after patch:', this.clientForm.value);
+        console.log('Form errors:', this.getFormValidationErrors());
       });
     }
   }
 
-  loadClient(id: number): void {
-    this.isLoading = true;
-    this.clientService.getClientById(id).subscribe({
-      next: (client) => {
-        this.clientForm.patchValue({
-          nom: client.nom,
-          ice: client.ice,
-          logoUrl: client.logoUrl,
-          adresse: client.adresse,
-          ville: client.ville,
-          pays: client.pays
-        });
-        this.isLoading = false;
-      },
-      error: () => {
-        this.isLoading = false;
-        this.snackBar.open('Failed to load client', 'Close', { duration: 3000 });
-        this.router.navigate(['/clients']);
+  // Helper method to debug form validation errors
+  getFormValidationErrors() {
+    const errors: any = {};
+    Object.keys(this.clientForm.controls).forEach(key => {
+      const control = this.clientForm.get(key);
+      if (control && control.errors) {
+        errors[key] = control.errors;
       }
     });
+    return errors;
   }
 
   onSubmit(): void {
     if (this.clientForm.invalid) {
+      // Mark all fields as touched to show validation errors
+      Object.keys(this.clientForm.controls).forEach(key => {
+        const control = this.clientForm.get(key);
+        if (control) {
+          control.markAsTouched();
+        }
+      });
+      this.snackBar.open('Veuillez corriger les erreurs du formulaire', 'Fermer', { duration: 3000 });
       return;
     }
 
@@ -88,33 +105,35 @@ export class ClientFormComponent implements OnInit {
     const clientData: ClientRequest = this.clientForm.value;
 
     if (this.isEditMode && this.clientData) {
-      this.clientService.updateClient(this.clientData?.id, clientData).subscribe({
+      this.clientService.updateClient(this.clientData.id, clientData).subscribe({
         next: () => {
           this.isLoading = false;
-          this.snackBar.open('Client updated successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/clients']);
+          this.snackBar.open('Client mis à jour avec succès', 'Fermer', { duration: 3000 });
+          this.dialogRef.close(true);
         },
-        error: () => {
+        error: (err) => {
           this.isLoading = false;
-          this.snackBar.open('Failed to update client', 'Close', { duration: 3000 });
+          console.error('Error updating client:', err);
+          this.snackBar.open('Échec de la mise à jour du client', 'Fermer', { duration: 3000 });
         }
       });
     } else {
       this.clientService.createClient(clientData).subscribe({
         next: () => {
           this.isLoading = false;
-          this.snackBar.open('Client created successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/clients']);
+          this.snackBar.open('Client créé avec succès', 'Fermer', { duration: 3000 });
+          this.dialogRef.close(true);
         },
-        error: () => {
+        error: (err) => {
           this.isLoading = false;
-          this.snackBar.open('Failed to create client', 'Close', { duration: 3000 });
+          console.error('Error creating client:', err);
+          this.snackBar.open('Échec de la création du client', 'Fermer', { duration: 3000 });
         }
       });
     }
   }
 
   onCancel(): void {
-    this.router.navigate(['/clients']);
+    this.dialogRef.close(false);
   }
 }

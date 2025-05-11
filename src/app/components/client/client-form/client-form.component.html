@@ -1,12 +1,21 @@
 <div class="no-scroll-form">
-  <h2>{{ isEditMode ? 'Modifier client' : 'Nouveau client' }}</h2>
+  <div class="dialog-header">
+    <h2>{{ isEditMode ? 'Modifier client' : 'Nouveau client' }}</h2>
+    <button mat-icon-button class="close-button" (click)="onCancel()" aria-label="Fermer">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+  </div>
 
   <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
     <div class="form-row">
       <mat-form-field appearance="fill">
         <mat-label>Nom</mat-label>
         <input matInput formControlName="nom" required>
-        <mat-error *ngIf="clientForm.get('nom')?.hasError('required') && (clientForm.get('nom')?.touched || clientForm.get('nom')?.dirty)">
+        <mat-error *ngIf="clientForm.get('nom')?.hasError('required') && clientForm.get('nom')?.touched">
           Le nom est obligatoire
         </mat-error>
       </mat-form-field>
@@ -14,10 +23,10 @@
       <mat-form-field appearance="fill">
         <mat-label>ICE</mat-label>
         <input matInput formControlName="ice" maxlength="15">
-        <mat-error *ngIf="clientForm.get('ice')?.hasError('pattern')">
-          Format ICE invalide
+        <mat-error *ngIf="clientForm.get('ice')?.hasError('pattern') && clientForm.get('ice')?.touched">
+          Format ICE invalide (15 chiffres)
         </mat-error>
-        <mat-error *ngIf="clientForm.get('ice')?.hasError('required') && (clientForm.get('ice')?.dirty || clientForm.get('ice')?.touched)">
+        <mat-error *ngIf="clientForm.get('ice')?.hasError('required') && clientForm.get('ice')?.touched">
           ICE est obligatoire
         </mat-error>
       </mat-form-field>
@@ -31,16 +40,16 @@
     <div class="form-row">
       <mat-form-field appearance="fill">
         <mat-label>Ville</mat-label>
-        <input matInput formControlName="ville">
-        <mat-error *ngIf="clientForm.get('ville')?.hasError('required') && (clientForm.get('ville')?.touched || clientForm.get('ville')?.dirty)">
+        <input matInput formControlName="ville" required>
+        <mat-error *ngIf="clientForm.get('ville')?.hasError('required') && clientForm.get('ville')?.touched">
           Ville est obligatoire
         </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill">
         <mat-label>Pays</mat-label>
-        <input matInput formControlName="pays">
-        <mat-error *ngIf="clientForm.get('pays')?.hasError('required') && (clientForm.get('pays')?.touched || clientForm.get('pays')?.dirty)">
+        <input matInput formControlName="pays" required>
+        <mat-error *ngIf="clientForm.get('pays')?.hasError('required') && clientForm.get('pays')?.touched">
           Pays est obligatoire
         </mat-error>
       </mat-form-field>
@@ -48,15 +57,21 @@
 
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Adresse</mat-label>
-      <input matInput formControlName="adresse">
-      <mat-error *ngIf="clientForm.get('adresse')?.hasError('required') && (clientForm.get('adresse')?.touched || clientForm.get('adresse')?.dirty)">
+      <input matInput formControlName="adresse" required>
+      <mat-error *ngIf="clientForm.get('adresse')?.hasError('required') && clientForm.get('adresse')?.touched">
         Adresse est obligatoire
       </mat-error>
     </mat-form-field>
 
+    <div class="debug-info" *ngIf="false">
+      <p>Form Valid: {{ clientForm.valid }}</p>
+      <p>Form Touched: {{ clientForm.touched }}</p>
+      <p>Form Values: {{ clientForm.value | json }}</p>
+    </div>
+
     <div class="actions">
       <button mat-button type="button" (click)="onCancel()">Annuler</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="clientForm.invalid">
+      <button mat-raised-button color="primary" type="submit" [disabled]="clientForm.invalid && clientForm.touched">
         {{ isEditMode ? 'Sauvegarder' : 'Créer' }}
       </button>
     </div>
