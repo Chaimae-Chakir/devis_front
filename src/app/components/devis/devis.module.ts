@@ -20,6 +20,7 @@ import { DevisListComponent } from './devis-list/devis-list.component';
 import { DevisFormComponent } from './devis-form/devis-form.component';
 import { DevisDetailComponent } from './devis-detail/devis-detail.component';
 import { devisRoutes } from './devis.routing';
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { devisRoutes } from './devis.routing';
     MatSnackBarModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatPaginatorModule
   ]
 })
 export class DevisModule {}

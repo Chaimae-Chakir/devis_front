@@ -1,5 +1,3 @@
-import {ClientResponse} from "./client.model";
-
 export interface DevisLigneResponse {
   id: number;
   descriptionLibre?: string;
