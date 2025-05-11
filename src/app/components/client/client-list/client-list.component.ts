@@ -3,9 +3,9 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { ClientFormComponent } from '../client-form/client-form.component';
-import {ClientPageResponse, ClientResponse} from "../../../models/client.model";
-import {ClientService} from "../../../services/client.service";
-import {ConfirmDialogComponent} from "../../../shared/confirm-dialog/confirm-dialog.component";
+import { ClientPageResponse, ClientResponse } from "../../../models/client.model";
+import { ClientService } from "../../../services/client.service";
+import { ConfirmDialogComponent } from "../../../shared/confirm-dialog/confirm-dialog.component";
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -16,9 +16,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class ClientListComponent implements OnInit {
   displayedColumns: string[] = ['nom', 'ice', 'ville', 'pays', 'actions'];
   dataSource = new MatTableDataSource<ClientResponse>();
-
   totalItems = 0;
-  pageSize = 10;
+  pageSize = 7;
   currentPage = 0;
   isLoading = false;
 
@@ -34,8 +33,10 @@ export class ClientListComponent implements OnInit {
     this.loadClients();
   }
 
+  // Fixes pagination by ensuring we're correctly passing page index to the backend
   loadClients(): void {
     this.isLoading = true;
+    // Note: Many backends expect page to be 0-indexed, make sure your API matches this expectation
     this.clientService.getPageClients(this.currentPage, this.pageSize)
       .subscribe({
         next: (response: ClientPageResponse) => {
@@ -43,14 +44,19 @@ export class ClientListComponent implements OnInit {
           this.totalItems = response.totalElements;
           this.isLoading = false;
         },
-        error: () => {
+        error: (err) => {
+          console.error('Error loading clients:', err);
           this.isLoading = false;
+          this.snackBar.open('Erreur lors du chargement des clients', 'Fermer', {
+            duration: 3000
+          });
         }
       });
   }
 
   onPageChange(event: PageEvent): void {
-    this.currentPage = event.pageIndex;
+    console.log('PageEvent:', event);
+    this.currentPage = event.pageIndex; // This is 0-indexed
     this.pageSize = event.pageSize;
     this.loadClients();
   }
@@ -66,6 +72,11 @@ export class ClientListComponent implements OnInit {
     const dialogRef = this.dialog.open(ClientFormComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        // After adding a new client, reset to first page to ensure we see new entries
+        if (this.paginator) {
+          this.paginator.firstPage();
+          this.currentPage = 0;
+        }
         this.loadClients();
       }
     });
@@ -101,6 +112,13 @@ export class ClientListComponent implements OnInit {
         this.isLoading = true;
         this.clientService.deleteClient(id).subscribe({
           next: () => {
+            // After deletion, check if we need to go to previous page
+            if (this.dataSource.data.length === 1 && this.currentPage > 0) {
+              this.currentPage--;
+              if (this.paginator) {
+                this.paginator.pageIndex = this.currentPage;
+              }
+            }
             this.loadClients();
             this.snackBar.open('Client supprimé avec succès', 'Fermer', {
               duration: 3000
