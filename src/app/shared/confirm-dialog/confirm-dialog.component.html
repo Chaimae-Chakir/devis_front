@@ -1,0 +1,9 @@
+<div mat-dialog-content class="minimal-dialog">
+  <h2>{{ data.title }}</h2>
+  <p>{{ data.message }}</p>
+
+  <div class="actions">
+    <button mat-button (click)="onNoClick()">Annuler</button>
+    <button mat-flat-button color="warn" (click)="onYesClick()">Supprimer</button>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+<div class="no-scroll-form">
+  <h2>{{ isEditMode ? 'Modifier client' : 'Nouveau client' }}</h2>
+
+  <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <mat-form-field appearance="fill">
+        <mat-label>Nom</mat-label>
+        <input matInput formControlName="nom" required>
+        <mat-error *ngIf="clientForm.get('nom')?.hasError('required') && (clientForm.get('nom')?.touched || clientForm.get('nom')?.dirty)">
+          Le nom est obligatoire
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>ICE</mat-label>
+        <input matInput formControlName="ice" maxlength="15">
+        <mat-error *ngIf="clientForm.get('ice')?.hasError('pattern')">
+          Format ICE invalide
+        </mat-error>
+        <mat-error *ngIf="clientForm.get('ice')?.hasError('required') && (clientForm.get('ice')?.dirty || clientForm.get('ice')?.touched)">
+          ICE est obligatoire
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>URL Logo</mat-label>
+      <input matInput formControlName="logoUrl">
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="fill">
+        <mat-label>Ville</mat-label>
+        <input matInput formControlName="ville">
+        <mat-error *ngIf="clientForm.get('ville')?.hasError('required') && (clientForm.get('ville')?.touched || clientForm.get('ville')?.dirty)">
+          Ville est obligatoire
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Pays</mat-label>
+        <input matInput formControlName="pays">
+        <mat-error *ngIf="clientForm.get('pays')?.hasError('required') && (clientForm.get('pays')?.touched || clientForm.get('pays')?.dirty)">
+          Pays est obligatoire
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Adresse</mat-label>
+      <input matInput formControlName="adresse">
+      <mat-error *ngIf="clientForm.get('adresse')?.hasError('required') && (clientForm.get('adresse')?.touched || clientForm.get('adresse')?.dirty)">
+        Adresse est obligatoire
+      </mat-error>
+    </mat-form-field>
+
+    <div class="actions">
+      <button mat-button type="button" (click)="onCancel()">Annuler</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="clientForm.invalid">
+        {{ isEditMode ? 'Sauvegarder' : 'Créer' }}
+      </button>
+    </div>
+  </form>
+</div>

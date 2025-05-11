@@ -1,0 +1,52 @@
+.container {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.table-container {
+  margin-top: 20px;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+
+  &.brouillon {
+    background-color: #ffd700;
+    color: #000;
+  }
+
+  &.validated {
+    background-color: #4caf50;
+    color: #fff;
+  }
+
+  &.sent {
+    background-color: #2196f3;
+    color: #fff;
+  }
+
+  &.canceled {
+    background-color: #f44336;
+    color: #fff;
+  }
+}
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  min-height: 52px;
+  button {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+  }
+}

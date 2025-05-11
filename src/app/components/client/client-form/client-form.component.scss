@@ -1,0 +1,55 @@
+/* client-form.component.scss */
+.no-scroll-form {
+  padding-top: 55px;
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+
+  h2 {
+    margin: 0 0 16px 0;
+    font-size: 1.3rem;
+    color: #333;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 12px;
+
+    mat-form-field {
+      flex: 1;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 18px 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .no-scroll-form {
+    height: auto;
+    max-height: none;
+    padding: 12px;
+
+    .form-row {
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+}
