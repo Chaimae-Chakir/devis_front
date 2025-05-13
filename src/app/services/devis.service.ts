@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {DevisPageResponse, DevisResponse} from '../models/devis-response.model';
 import { DevisRequest } from '../models/devis-request.model';
-import {environment} from "../environments/environment";
+import {environment} from "../../environments/environment";
 import {ClientPageResponse} from "../models/client.model";
 
 @Injectable({

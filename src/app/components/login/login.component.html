@@ -1,0 +1,45 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1>Login</h1>
+    <p>Enter your credentials to access your account</p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f['username'].errors }"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
+        />
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+
+      <button [disabled]="loading" class="login-btn">
+        <span *ngIf="loading" class="spinner"></span>
+        Login
+      </button>
+
+      <div class="footer-links">
+        <a href="#" class="forgot-link">Forgot password?</a>
+        <span class="separator"></span>
+        <span class="no-account">Don't have an account? <a href="#" class="register-link">Register</a></span>
+      </div>
+    </form>
+  </div>
+</div>
