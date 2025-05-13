@@ -15,11 +15,15 @@ export const Approutes: Routes = [
       {
         path: 'client',
         loadChildren: () => import('./components/client/client.module').then(m => m.ClientModule)
-      }
+      },
+      {
+        path: 'parametre',
+        loadChildren: () => import('./components/parametre/parametre.module').then(m => m.ParametreModule)
+      },
     ]
   },
   {
     path: '**',
-    redirectTo: '/starter'
+    redirectTo: '/devis'
   }
 ];

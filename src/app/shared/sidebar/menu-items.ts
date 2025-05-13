@@ -16,5 +16,13 @@ export const ROUTES: RouteInfo[] = [
     class: '',
     extralink: false,
     submenu: []
+  },
+  {
+    path: '/parametre',
+    title: 'Paramètres',
+    icon: 'bi bi-gear',
+    class: '',
+    extralink: false,
+    submenu: []
   }
 ];

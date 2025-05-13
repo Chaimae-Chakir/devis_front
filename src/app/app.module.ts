@@ -24,7 +24,7 @@ import { SpinnerComponent } from './shared/spinner.component';
 @NgModule({
   declarations: [
     AppComponent,
-    SpinnerComponent,
+    SpinnerComponent
   ],
   imports: [
     CommonModule,
