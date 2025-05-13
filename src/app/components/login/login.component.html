@@ -1,11 +1,11 @@
 <div class="login-container">
   <div class="login-card">
-    <h1>Login</h1>
-    <p>Enter your credentials to access your account</p>
+    <h1>Connexion</h1>
+    <p>Saisissez vos identifiants pour accéder à votre compte</p>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="username">Nom d'utilisateur</label>
         <input
           type="text"
           id="username"
@@ -13,10 +13,13 @@
           class="form-control"
           [ngClass]="{ 'is-invalid': submitted && f['username'].errors }"
         />
+        <div *ngIf="submitted && f['username'].errors" class="invalid-feedback">
+          Le nom d'utilisateur est requis
+        </div>
       </div>
 
       <div class="form-group">
-        <label for="password">Password</label>
+        <label for="password">Mot de passe</label>
         <input
           type="password"
           id="password"
@@ -24,6 +27,9 @@
           class="form-control"
           [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
         />
+        <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+          Le mot de passe est requis
+        </div>
       </div>
 
       <div *ngIf="errorMessage" class="alert alert-danger">
@@ -32,13 +38,13 @@
 
       <button [disabled]="loading" class="login-btn">
         <span *ngIf="loading" class="spinner"></span>
-        Login
+        Se connecter
       </button>
 
       <div class="footer-links">
-        <a href="#" class="forgot-link">Forgot password?</a>
+        <a href="#" class="forgot-link">Mot de passe oublié ?</a>
         <span class="separator"></span>
-        <span class="no-account">Don't have an account? <a href="#" class="register-link">Register</a></span>
+        <span class="no-account">Pas de compte ? <a href="#" class="register-link">S'inscrire</a></span>
       </div>
     </form>
   </div>
