@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap, switchMap } from 'rxjs/operators';
-import { TokenResponse } from "../../models/TokenResponse.model";
+import { TokenResponse } from "../../models/tokenResponse.model";
 import { JwtHelperService } from "@auth0/angular-jwt";
 
 @Injectable()
