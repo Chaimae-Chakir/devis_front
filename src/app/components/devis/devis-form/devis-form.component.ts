@@ -33,11 +33,11 @@ export class DevisFormComponent implements OnInit {
         ville: ['',Validators.required],
         pays: ['',Validators.required]
       }),
-      perimetre: [''],
-      offreFonctionnelle: [''],
-      offreTechnique: [''],
-      conditions: [''],
-      planning: [''],
+      perimetre: ['',Validators.required],
+      offreFonctionnelle: ['',Validators.required],
+      offreTechnique: ['',Validators.required],
+      conditions: ['',Validators.required],
+      planning: ['',Validators.required],
       offrePdfUrl: [''],
       lignes: this.fb.array([this.createLigne()])
     });
