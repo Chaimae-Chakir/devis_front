@@ -15,7 +15,8 @@ export const ROUTES: RouteInfo[] = [
     icon: 'bi bi-people',
     class: '',
     extralink: false,
-    submenu: []
+    submenu: [],
+    roles: ['ADMIN']
   },
   {
     path: '/dashboard/parametre',

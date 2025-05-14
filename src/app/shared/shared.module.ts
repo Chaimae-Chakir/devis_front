@@ -13,7 +13,7 @@ import { SpinnerComponent } from './spinner.component';
     CommonModule,
     ConfirmDialogComponent,
     NavigationComponent,
-    SidebarComponent
+    SidebarComponent,
   ],
   exports: [
     ConfirmDialogComponent,
