@@ -1,51 +1,88 @@
 <div class="login-container">
-  <div class="login-card">
-    <h1>Connexion</h1>
-    <p>Saisissez vos identifiants pour accéder à votre compte</p>
+  <mat-card class="login-card mat-elevation-z8">
+    <mat-card-header class="login-header">
+      <mat-card-title>Connexion</mat-card-title>
+      <mat-card-subtitle>
+        Saisissez vos identifiants pour accéder à votre compte
+      </mat-card-subtitle>
+    </mat-card-header>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-      <div class="form-group">
-        <label for="username">Nom d'utilisateur</label>
-        <input
-          type="text"
-          id="username"
-          formControlName="username"
-          class="form-control"
-          [ngClass]="{ 'is-invalid': submitted && f['username'].errors }"
-        />
-        <div *ngIf="submitted && f['username'].errors" class="invalid-feedback">
-          Le nom d'utilisateur est requis
-        </div>
-      </div>
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <mat-error *ngIf="errorMessage" class="error-message">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMessage }}</span>
+        </mat-error>
 
-      <div class="form-group">
-        <label for="password">Mot de passe</label>
-        <input
-          type="password"
-          id="password"
-          formControlName="password"
-          class="form-control"
-          [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
-        />
-        <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
-          Le mot de passe est requis
-        </div>
-      </div>
+        <mat-form-field appearance="fill" class="form-group">
+          <mat-label>Nom d'utilisateur</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="username"
+            id="username"
+            aria-label="Nom d'utilisateur"
+          />
+          <mat-icon matPrefix>person</mat-icon>
+          <mat-error
+            *ngIf="
+              loginForm.get('username')?.hasError('required') &&
+              (loginForm.get('username')?.dirty ||
+                loginForm.get('username')?.touched)
+            "
+          >
+            Le nom d'utilisateur est requis
+          </mat-error>
+        </mat-form-field>
 
-      <div *ngIf="errorMessage" class="alert alert-danger">
-        {{ errorMessage }}
-      </div>
+        <mat-form-field appearance="fill" class="form-group">
+          <mat-label>Mot de passe</mat-label>
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            id="password"
+            aria-label="Mot de passe"
+          />
+          <mat-icon matPrefix>lock</mat-icon>
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hidePassword = !hidePassword"
+            type="button"
+            [attr.aria-label]="
+              hidePassword ? 'Afficher le mot de passe' : 'Masquer le mot de passe'
+            "
+          >
+            <mat-icon>{{
+                hidePassword ? 'visibility_off' : 'visibility'
+              }}</mat-icon>
+          </button>
+          <mat-error
+            *ngIf="
+              loginForm.get('password')?.hasError('required') &&
+              (loginForm.get('password')?.dirty ||
+                loginForm.get('password')?.touched)
+            "
+          >
+            Le mot de passe est requis
+          </mat-error>
+        </mat-form-field>
 
-      <button [disabled]="loading" class="login-btn">
-        <span *ngIf="loading" class="spinner"></span>
-        Se connecter
-      </button>
-
-      <div class="footer-links">
-        <a href="#" class="forgot-link">Mot de passe oublié ?</a>
-        <span class="separator"></span>
-        <span class="no-account">Pas de compte ? <a href="#" class="register-link">S'inscrire</a></span>
-      </div>
-    </form>
-  </div>
+        <button
+          mat-raised-button
+          type="submit"
+          color="primary"
+          [disabled]="loading"
+          class="login-btn"
+          aria-label="Se connecter"
+        >
+          <span *ngIf="!loading">Se connecter</span>
+          <span *ngIf="loading" class="button-loading">
+            <mat-spinner diameter="20" color="accent"></mat-spinner>
+          </span>
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>
