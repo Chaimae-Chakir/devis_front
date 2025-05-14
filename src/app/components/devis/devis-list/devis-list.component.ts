@@ -60,11 +60,11 @@ export class DevisListComponent implements OnInit {
   }
 
   editDevis(id: number): void {
-    this.router.navigate(['/devis/edit', id]);
+    this.router.navigate(['/dashboard/devis/edit', id]);
   }
 
   viewDevis(id: number): void {
-    this.router.navigate(['/devis/view', id]);
+    this.router.navigate(['/dashboard/devis/view', id]);
   }
 
   deleteDevis(id: number): void {
@@ -103,7 +103,7 @@ export class DevisListComponent implements OnInit {
 
   duplicateDevis(id: number): void {
     this.devisService.duplicateDevis(id).subscribe(newDevis => {
-      this.router.navigate(['/devis/edit', newDevis.id]);
+      this.router.navigate(['/dashboard/devis/edit', newDevis.id]);
     });
   }
 
@@ -121,6 +121,6 @@ export class DevisListComponent implements OnInit {
   }
 
   createNewDevis(): void {
-    this.router.navigate(['/devis/new']);
+    this.router.navigate(['/dashboard/devis/new']);
   }
 }

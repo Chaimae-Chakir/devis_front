@@ -1,50 +1,26 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  CommonModule, LocationStrategy,
-  PathLocationStrategy
-} from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import {RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
-import { FullComponent } from './layouts/full/full.component';
-
-
-import { NavigationComponent } from './shared/header/navigation.component';
-import { SidebarComponent } from './shared/sidebar/sidebar.component';
-
-import { Approutes } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { SpinnerComponent } from './shared/spinner.component';
+import { Approutes } from './app-routing.module';
+import { CoreModule } from './core/core.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    SpinnerComponent
-  ],
+  declarations: [AppComponent],
   imports: [
-    CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
-    FormsModule,
-    ReactiveFormsModule,
     HttpClientModule,
-    NgbModule,
     RouterModule.forRoot(Approutes, { useHash: false }),
-    FullComponent,
-    NavigationComponent,
-    SidebarComponent,
+    CoreModule,
+    SharedModule,
   ],
-  providers: [
-    {
-      provide: LocationStrategy,
-      useClass: PathLocationStrategy
-    },
-  ],
-  bootstrap: [AppComponent]
+  providers: [ { provide: LocationStrategy, useClass: PathLocationStrategy }],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

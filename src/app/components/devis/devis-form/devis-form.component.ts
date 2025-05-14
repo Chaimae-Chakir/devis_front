@@ -151,7 +151,7 @@ export class DevisFormComponent implements OnInit {
       this.devisService.updateDevis(this.devisId, devisData).subscribe({
         next: () => {
           this.snackBar.open('Devis mis à jour avec succès', 'Fermer', { duration: 3000 });
-          this.router.navigate(['/devis']);
+          this.router.navigate(['/dashboard/devis']);
         },
         error: () => {
           this.isLoading = false;
@@ -161,7 +161,7 @@ export class DevisFormComponent implements OnInit {
       this.devisService.createDevis(devisData).subscribe({
         next: () => {
           this.snackBar.open('Devis créé avec succès', 'Fermer', { duration: 3000 });
-          this.router.navigate(['/devis']);
+          this.router.navigate(['/dashboard/devis']);
         },
         error: () => {
           this.isLoading = false;

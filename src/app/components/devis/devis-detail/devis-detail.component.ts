@@ -54,7 +54,7 @@ export class DevisDetailComponent implements OnInit {
 
   editDevis(): void {
     if (this.devis) {
-      this.router.navigate(['/devis/edit', this.devis.id]);
+      this.router.navigate(['/dashboard/devis/edit', this.devis.id]);
     }
   }
 
@@ -72,7 +72,7 @@ export class DevisDetailComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result && this.devis) {
         this.devisService.deleteDevis(this.devis.id).subscribe(() => {
-          this.router.navigate(['/devis']);
+          this.router.navigate(['/dashboard/devis']);
         });
       }
     });

@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
-import { TokenResponse } from "../models/TokenResponse.model";
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { catchError, map, tap, switchMap } from 'rxjs/operators';
+import { TokenResponse } from "../../models/TokenResponse.model";
 import { JwtHelperService } from "@auth0/angular-jwt";
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
   private readonly REFRESH_TOKEN_KEY = 'auth_refresh_token';
@@ -18,6 +16,10 @@ export class AuthService {
 
   private userRolesSubject = new BehaviorSubject<string[]>(this.getUserRoles());
   public userRoles$ = this.userRolesSubject.asObservable();
+
+  // Flag to prevent multiple concurrent token refresh requests
+  private isRefreshing = false;
+  private refreshTokenSubject = new BehaviorSubject<any>(null);
 
   private jwtHelper = new JwtHelperService();
   private apiUrl = 'http://localhost:8080/api';
@@ -35,12 +37,29 @@ export class AuthService {
     } else {
       const hasToken = !!localStorage.getItem(this.TOKEN_KEY);
       if (hasToken) {
-        console.warn('Invalid or expired token found in storage');
-        // Clear invalid tokens
-        this.logout();
+        console.log('Potentially expired token found in storage, checking if it can be refreshed');
+        // Check if we have a refresh token to try
+        const refreshToken = localStorage.getItem(this.REFRESH_TOKEN_KEY);
+        if (refreshToken) {
+          this.refreshToken().subscribe({
+            next: () => console.log('Token successfully refreshed during initialization'),
+            error: (err) => {
+              console.warn('Failed to refresh token during initialization, logging out', err);
+              this.clearTokens();
+              this.isAuthenticatedSubject.next(false);
+              this.userRolesSubject.next([]);
+            }
+          });
+        } else {
+          console.warn('No refresh token available, clearing invalid tokens');
+          this.clearTokens();
+          this.isAuthenticatedSubject.next(false);
+          this.userRolesSubject.next([]);
+        }
+      } else {
+        this.isAuthenticatedSubject.next(false);
+        this.userRolesSubject.next([]);
       }
-      this.isAuthenticatedSubject.next(false);
-      this.userRolesSubject.next([]);
     }
   }
 
@@ -71,9 +90,7 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
-    localStorage.removeItem(this.TOKEN_EXPIRES_AT_KEY);
+    this.clearTokens();
 
     if (this.tokenRefreshInterval) {
       clearInterval(this.tokenRefreshInterval);
@@ -84,21 +101,60 @@ export class AuthService {
     this.userRolesSubject.next([]);
   }
 
+  private clearTokens(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    localStorage.removeItem(this.TOKEN_EXPIRES_AT_KEY);
+  }
+
   refreshToken(): Observable<boolean> {
+    // If already refreshing, wait for completion of that request
+    if (this.isRefreshing) {
+      return this.refreshTokenSubject.pipe(
+          switchMap(token => {
+            if (token) {
+              return of(true);
+            } else {
+              return throwError(() => new Error('Session expired. Please login again.'));
+            }
+          })
+      );
+    }
+
     const refreshToken = localStorage.getItem(this.REFRESH_TOKEN_KEY);
     if (!refreshToken) {
       console.warn('No refresh token available');
       return throwError(() => new Error('Session expired. Please login again.'));
     }
 
+    this.isRefreshing = true;
+    this.refreshTokenSubject.next(null);
+
+    console.log('Attempting to refresh token...');
     return this.http.post<TokenResponse>(`${this.apiUrl}/auth/refresh`, { refreshToken })
         .pipe(
-            tap(response => this.handleAuthSuccess(response)),
+            tap(response => {
+              console.log('Token refresh successful, storing new tokens');
+              this.handleAuthSuccess(response);
+              this.refreshTokenSubject.next(response.access_token);
+            }),
             map(() => true),
-            catchError(error => {
+            catchError((error: HttpErrorResponse) => {
               console.error('Token refresh failed', error);
+
+              // Additional error details logging to help debug
+              if (error.error) {
+                console.error('Error details:', JSON.stringify(error.error));
+              }
+
               this.logout();
               return throwError(() => new Error('Session expired. Please login again.'));
+            }),
+            // Always mark as no longer refreshing when complete
+            tap(() => {
+              this.isRefreshing = false;
+            }, () => {
+              this.isRefreshing = false;
             })
         );
   }
@@ -117,7 +173,7 @@ export class AuthService {
   }
 
   isCommercial(): boolean {
-    return this.hasRole('COMMERCIAL');
+    return this.hasRole('USER');  // Changed from COMMERCIAL to USER to match backend roles
   }
 
   private handleAuthSuccess(response: TokenResponse): void {
@@ -169,23 +225,33 @@ export class AuthService {
     const expiresAt = parseInt(expiresAtStr, 10);
     const now = new Date().getTime();
 
-    // Refresh token if it expires in less than 5 MINUTES (not 5 hours)
+    // Refresh token if it expires in less than 5 minutes
     if (expiresAt - now < 5 * 60 * 1000 && expiresAt > now) {
       console.log('Token expiring soon, refreshing...');
-      this.refreshToken().subscribe({
-        error: (err) => {
-          console.error('Token refresh failed during expiration check', err);
-          this.logout();
-        }
-      });
+      if (!this.isRefreshing) {
+        this.refreshToken().subscribe({
+          next: () => {
+            console.log('Token refreshed successfully');
+          },
+          error: (err) => {
+            console.error('Token refresh failed during expiration check', err);
+            this.logout();
+          }
+        });
+      }
     } else if (expiresAt <= now) {
       console.warn('Token has expired, attempting to refresh');
-      this.refreshToken().subscribe({
-        error: (err) => {
-          console.error('Token refresh failed after expiration', err);
-          this.logout();
-        }
-      });
+      if (!this.isRefreshing) {
+        this.refreshToken().subscribe({
+          next: () => {
+            console.log('Token refreshed successfully after expiration');
+          },
+          error: (err) => {
+            console.error('Token refresh failed after expiration', err);
+            this.logout();
+          }
+        });
+      }
     }
   }
 }
