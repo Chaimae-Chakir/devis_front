@@ -10,8 +10,7 @@ import { AuthService } from '../../core/services/auth.service';
   imports: [NgbDropdownModule, CommonModule],
   templateUrl: './navigation.component.html'
 })
-export class NavigationComponent implements AfterViewInit {
-  @Output() toggleSidebar = new EventEmitter<void>();
+export class NavigationComponent {
   public username: string = '';
   public isAuthenticated = false;
   public userRoles: string[] = [];
@@ -43,7 +42,7 @@ export class NavigationComponent implements AfterViewInit {
       const token = this.authService.getToken();
       if (token) {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        this.username = payload.preferred_username || payload.name || payload.sub || 'User';
+        this.username = payload.preferred_username ;
       }
     } catch (error) {
       console.error('Erreur lors du décodage du token', error);
@@ -55,6 +54,4 @@ export class NavigationComponent implements AfterViewInit {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
-
-  ngAfterViewInit() { }
 }
