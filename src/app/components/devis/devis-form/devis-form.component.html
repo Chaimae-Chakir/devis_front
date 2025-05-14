@@ -2,71 +2,90 @@
   <h1>{{ isEditMode ? 'Modifier le devis' : 'Créer un nouveau devis' }}</h1>
 
   <form [formGroup]="devisForm" (ngSubmit)="onSubmit()">
+    <!-- Client Information Card -->
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Informations du client</mat-card-title>
+      </mat-card-header>
+      <mat-card-content formGroupName="client">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Nom du client</mat-label>
+            <input matInput formControlName="nom" required>
+            <mat-error *ngIf="devisForm.get('client.nom')?.hasError('required')">
+              Le nom du client est obligatoire
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>ICE</mat-label>
+            <input matInput formControlName="ice" maxlength="15">
+            <mat-error *ngIf="devisForm.get('client.ice')?.hasError('pattern') && devisForm.get('ice')?.touched">
+              Format ICE invalide (15 chiffres)
+            </mat-error>
+            <mat-error *ngIf="devisForm.get('client.ice')?.hasError('required') && devisForm.get('ice')?.touched">
+              ICE est obligatoire
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Adresse</mat-label>
+            <input matInput formControlName="adresse">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Ville</mat-label>
+            <input matInput formControlName="ville">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Pays</mat-label>
+            <input matInput formControlName="pays">
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Devis Information Card -->
     <mat-card>
       <mat-card-header>
         <mat-card-title>Informations générales</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Client</mat-label>
-            <mat-select formControlName="clientId" required>
-              <mat-option *ngFor="let client of clients" [value]="client.id">
-                {{ client.nom }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="devisForm.get('clientId')?.hasError('required')">
-              Le client est obligatoire
-            </mat-error>
-          </mat-form-field>
-        </div>
-
         <mat-form-field appearance="outline" class="form-field-full">
           <mat-label>Périmètre</mat-label>
-          <textarea matInput formControlName="perimetre" rows="3" required></textarea>
-          <mat-error *ngIf="devisForm.get('perimetre')?.hasError('required') && (devisForm.get('perimetre')?.dirty || devisForm.get('perimetre')?.touched)">
-            Périmètre est obligatoire
-          </mat-error>
+          <textarea matInput formControlName="perimetre" rows="3"></textarea>
         </mat-form-field>
 
         <div class="form-row">
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>Offre fonctionnelle</mat-label>
-            <textarea matInput formControlName="offreFonctionnelle" rows="3" required></textarea>
-            <mat-error *ngIf="devisForm.get('offreFonctionnelle')?.hasError('required') && (devisForm.get('offreFonctionnelle')?.dirty || devisForm.get('offreFonctionnelle')?.touched)">
-              Offre fonctionnelle est obligatoire
-            </mat-error>
+            <textarea matInput formControlName="offreFonctionnelle" rows="3"></textarea>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>Offre technique</mat-label>
-            <textarea matInput formControlName="offreTechnique" rows="3" required></textarea>
-            <mat-error *ngIf="devisForm.get('offreTechnique')?.hasError('required') && (devisForm.get('offreTechnique')?.dirty || devisForm.get('offreTechnique')?.touched)">
-              Offre Technique est obligatoire
-            </mat-error>
+            <textarea matInput formControlName="offreTechnique" rows="3"></textarea>
           </mat-form-field>
         </div>
 
         <div class="form-row">
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>Conditions</mat-label>
-            <textarea matInput formControlName="conditions" rows="3" required></textarea>
-            <mat-error *ngIf="devisForm.get('conditions')?.hasError('required') && (devisForm.get('conditions')?.dirty || devisForm.get('conditions')?.touched)">
-              Conditions sont obligatoires
-            </mat-error>
+            <textarea matInput formControlName="conditions" rows="3"></textarea>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>Planning</mat-label>
-            <textarea matInput formControlName="planning" rows="3" required></textarea>
-            <mat-error *ngIf="devisForm.get('planning')?.hasError('required') && (devisForm.get('planning')?.dirty || devisForm.get('planning')?.touched)">
-              Planning est obligatoire
-            </mat-error>
+            <textarea matInput formControlName="planning" rows="3"></textarea>
           </mat-form-field>
         </div>
       </mat-card-content>
     </mat-card>
 
+    <!-- Lignes de devis -->
     <mat-card class="lignes-card">
       <mat-card-header>
         <mat-card-title>Lignes de devis</mat-card-title>
@@ -81,7 +100,7 @@
               <mat-form-field appearance="outline" class="form-field">
                 <mat-label>Description</mat-label>
                 <input matInput formControlName="descriptionLibre" required>
-                <mat-error *ngIf="ligne.get('descriptionLibre')?.hasError('required') && (ligne.get('descriptionLibre')?.touched || ligne.get('descriptionLibre')?.dirty )">
+                <mat-error *ngIf="ligne.get('descriptionLibre')?.hasError('required')">
                   Description est obligatoire
                 </mat-error>
               </mat-form-field>
@@ -118,7 +137,7 @@
                 <input matInput type="number" formControlName="ristournePct" min="0" max="100" step="0.1">
               </mat-form-field>
 
-              <button mat-icon-button color="warn" (click)="removeLigne(i)" type="button">
+              <button mat-icon-button color="warn" (click)="removeLigne(i)" type="button" [disabled]="lignes.length <= 1">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
@@ -127,6 +146,7 @@
       </mat-card-content>
     </mat-card>
 
+    <!-- Totals Card -->
     <mat-card class="totals-card">
       <mat-card-content>
         <div class="totals-row">
@@ -135,17 +155,21 @@
         </div>
         <div class="totals-row">
           <span>Total TTC:</span>
-          <span>{{ calculateTotalTtc()  | number:'1.2-2' }} MAD</span>
+          <span>{{ calculateTotalTtc() | number:'1.2-2' }} MAD</span>
         </div>
       </mat-card-content>
     </mat-card>
 
+    <!-- Actions -->
     <div class="actions">
-      <button mat-raised-button type="button" (click)="router.navigate(['/devis'])">
+      <button mat-raised-button type="button" (click)="router.navigate(['/dashboard/devis'])">
         Annuler
       </button>
       <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
         {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+        <mat-icon *ngIf="isLoading">
+          <mat-spinner diameter="20"></mat-spinner>
+        </mat-icon>
       </button>
     </div>
   </form>

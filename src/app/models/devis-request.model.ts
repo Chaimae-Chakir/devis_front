@@ -1,3 +1,5 @@
+import {ClientRequest} from "./client.model";
+
 export interface DevisLigneRequest {
   descriptionLibre?: string;
   quantite: number;
@@ -7,7 +9,7 @@ export interface DevisLigneRequest {
 }
 
 export interface DevisRequest {
-  clientId: number;
+  client: ClientRequest;
   lignes: DevisLigneRequest[];
   perimetre?: string;
   offreFonctionnelle?: string;

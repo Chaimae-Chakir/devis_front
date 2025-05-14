@@ -1,3 +1,5 @@
+import {ClientRequest, ClientResponse} from "./client.model";
+
 export interface DevisLigneResponse {
   id: number;
   descriptionLibre?: string;
@@ -10,8 +12,7 @@ export interface DevisLigneResponse {
 export interface DevisResponse {
   id: number;
   numero: string;
-  clientId: number;
-  clientNom: string;
+  client: ClientResponse;
   statut: string;
   dateCreation: string;
   dateValidation?: string;

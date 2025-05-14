@@ -2,10 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {DevisService} from "../../../services/devis.service";
-import {ClientService} from "../../../services/client.service";
-import {DevisRequest, DevisLigneRequest} from "../../../models/devis-request.model";
-import {ClientPageResponse, ClientResponse} from "../../../models/client.model";
+import { DevisService } from "../../../services/devis.service";
+import { DevisRequest, DevisLigneRequest } from "../../../models/devis-request.model";
 
 @Component({
   selector: 'app-devis-form',
@@ -17,18 +15,24 @@ export class DevisFormComponent implements OnInit {
   isEditMode = false;
   devisId: number | null = null;
   isLoading = false;
-  clients: ClientResponse[]=[];
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     protected router: Router,
     private devisService: DevisService,
-    private clientService: ClientService,
     private snackBar: MatSnackBar
   ) {
     this.devisForm = this.fb.group({
-      clientId: ['', Validators.required],
+      client: this.fb.group({
+        id: [null],
+        nom: ['', Validators.required],
+        ice: ['', [Validators.required, Validators.pattern(/^[0-9]{15}$/)]],
+        logoUrl: [''],
+        adresse: ['',Validators.required],
+        ville: ['',Validators.required],
+        pays: ['',Validators.required]
+      }),
       perimetre: [''],
       offreFonctionnelle: [''],
       offreTechnique: [''],
@@ -40,8 +44,6 @@ export class DevisFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadClients();
-
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.isEditMode = true;
@@ -57,11 +59,11 @@ export class DevisFormComponent implements OnInit {
 
   createLigne(ligne?: DevisLigneRequest): FormGroup {
     return this.fb.group({
-      descriptionLibre: [ligne?.descriptionLibre ?? ''],
+      descriptionLibre: [ligne?.descriptionLibre ?? '', Validators.required],
       quantite: [ligne?.quantite ?? 1, [Validators.required, Validators.min(0.01)]],
       prixUnitaireHt: [ligne?.prixUnitaireHt ?? 0, [Validators.required, Validators.min(0.01)]],
       tvaPct: [ligne?.tvaPct ?? 20],
-      ristournePct: [ligne?.ristournePct ?? 20]
+      ristournePct: [ligne?.ristournePct ?? 0]
     });
   }
 
@@ -70,19 +72,11 @@ export class DevisFormComponent implements OnInit {
   }
 
   removeLigne(index: number): void {
-    this.lignes.removeAt(index);
-  }
-
-  loadClients(): void {
-    this.clientService.getAllClients().subscribe({
-      next: (response) => {
-        console.log('Clients loaded:', response);
-        this.clients=response.clients;
-      },
-      error: (error) => {
-        console.error('Error loading clients:', error);
-      }
-    });
+    if (this.lignes.length > 1) {
+      this.lignes.removeAt(index);
+    } else {
+      this.snackBar.open('Un devis doit avoir au moins une ligne', 'Fermer', { duration: 3000 });
+    }
   }
 
   loadDevis(id: number): void {
@@ -90,7 +84,14 @@ export class DevisFormComponent implements OnInit {
     this.devisService.getDevisById(id).subscribe({
       next: (devis) => {
         this.devisForm.patchValue({
-          clientId: devis.clientId,
+          client: {
+            id: devis.client.id,
+            nom: devis.client.nom,
+            ice: devis.client.ice,
+            adresse: devis.client.adresse,
+            ville: devis.client.ville,
+            pays: devis.client.pays
+          },
           perimetre: devis.perimetre,
           offreFonctionnelle: devis.offreFonctionnelle,
           offreTechnique: devis.offreTechnique,
@@ -98,6 +99,7 @@ export class DevisFormComponent implements OnInit {
           planning: devis.planning,
           offrePdfUrl: devis.offrePdfUrl
         });
+
         // Clear existing lines
         while (this.lignes.length) {
           this.lignes.removeAt(0);
@@ -110,6 +112,7 @@ export class DevisFormComponent implements OnInit {
       },
       error: () => {
         this.isLoading = false;
+        this.snackBar.open('Erreur lors du chargement du devis', 'Fermer', { duration: 3000 });
       }
     });
   }
@@ -155,6 +158,7 @@ export class DevisFormComponent implements OnInit {
         },
         error: () => {
           this.isLoading = false;
+          this.snackBar.open('Erreur lors de la mise à jour du devis', 'Fermer', { duration: 3000 });
         }
       });
     } else {
@@ -165,6 +169,7 @@ export class DevisFormComponent implements OnInit {
         },
         error: () => {
           this.isLoading = false;
+          this.snackBar.open('Erreur lors de la création du devis', 'Fermer', { duration: 3000 });
         }
       });
     }
