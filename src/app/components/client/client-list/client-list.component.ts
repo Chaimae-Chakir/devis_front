@@ -100,7 +100,6 @@ export class ClientListComponent implements OnInit {
 
   deleteClient(id: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      disableClose: true,
       data: {
         title: 'Confirmer la suppression',
         message: 'Êtes-vous sûr de vouloir supprimer ce client ?'

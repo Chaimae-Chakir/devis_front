@@ -62,7 +62,6 @@ export class DevisDetailComponent implements OnInit {
     if (!this.devis) return;
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      disableClose: true,
       data: {
         title: 'Confirmer la suppression',
         message: 'Êtes-vous sûr de vouloir supprimer ce devis ?'
